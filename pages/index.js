@@ -1,75 +1,86 @@
-import Link from 'next/link';
-import { getPosts } from '../utils/mdx-utils';
+import Head from 'next/head';
+import { useRef } from 'react';
 
-import Footer from '../components/Footer';
-import Header from '../components/Header';
-import Layout, { GradientBackground } from '../components/Layout';
-import ArrowIcon from '../components/ArrowIcon';
-import { getGlobalData } from '../utils/global-data';
-import SEO from '../components/SEO';
+export default function Home() {
+  const formRef = useRef(null);
 
-export default function Index({ posts, globalData }) {
+  const handleScrollToForm = () => {
+    formRef.current.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <Layout>
-      <SEO title={globalData.name} description={globalData.blogTitle} />
-      <Header name={globalData.name} />
-      <main className="w-full">
-        <h1 className="mb-12 text-3xl text-center lg:text-5xl">
-          {globalData.blogTitle}
-        </h1>
-        <ul className="w-full">
-          {posts.map((post) => (
-            <li
-              key={post.filePath}
-              className="transition border border-b-0 bg-white/10 border-gray-800/10 md:first:rounded-t-lg md:last:rounded-b-lg backdrop-blur-lg dark:bg-black/30 hover:bg-white/20 dark:hover:bg-black/50 dark:border-white/10 last:border-b"
-              data-sb-object-id={`posts/${post.filePath}`}
+    <>
+      <Head>
+        <title>Your Company Name - Join Us!</title>
+        <meta name="description" content="Apply to join our coding company and work on exciting projects!" />
+      </Head>
+      <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex flex-col items-center">
+        {/* Landing Section */}
+        <header className="w-full py-12 text-center">
+          <h1 className="text-4xl font-bold mb-4">Your Company Name</h1>
+          <p className="text-lg mb-8 max-w-xl mx-auto">
+            We build innovative software and open source projects. Join our team of passionate developers and make an impact!
+          </p>
+          <button
+            onClick={handleScrollToForm}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+          >
+            Apply Now
+          </button>
+        </header>
+
+        {/* Application Form */}
+        <main ref={formRef} className="w-full max-w-lg bg-white rounded-xl shadow-lg p-8 mt-12">
+          <h2 className="text-2xl font-semibold mb-6 text-center">Application Form</h2>
+          <form
+            className="flex flex-col gap-4"
+            action="https://formspree.io/f/your-form-id" // Replace with your Formspree or backend endpoint
+            method="POST"
+          >
+            <input
+              type="text"
+              name="name"
+              placeholder="Your Name"
+              required
+              className="border rounded px-4 py-2"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Your Email"
+              required
+              className="border rounded px-4 py-2"
+            />
+            <select name="role" required className="border rounded px-4 py-2">
+              <option value="">Select Role</option>
+              <option value="developer">Developer</option>
+              <option value="manager">Manager</option>
+              <option value="designer">Designer</option>
+              <option value="other">Other</option>
+            </select>
+            <input
+              type="url"
+              name="resume"
+              placeholder="Link to Resume or GitHub"
+              required
+              className="border rounded px-4 py-2"
+            />
+            <textarea
+              name="message"
+              placeholder="Why do you want to join?"
+              required
+              className="border rounded px-4 py-2"
+              rows={4}
+            />
+            <button
+              type="submit"
+              className="bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition"
             >
-              <Link
-                as={`/posts/${post.filePath.replace(/\.mdx?$/, '')}`}
-                href={`/posts/[slug]`}
-                className="block px-6 py-6 lg:py-10 lg:px-16 focus:outline-hidden focus:ring-4 focus:ring-primary/50"
-              >
-                {post.data.date && (
-                  <p
-                    className="mb-3 font-bold uppercase opacity-60"
-                    data-sb-field-path="date"
-                  >
-                    {post.data.date}
-                  </p>
-                )}
-                <h2 className="text-2xl md:text-3xl" data-sb-field-path="title">
-                  {post.data.title}
-                </h2>
-                {post.data.description && (
-                  <p
-                    className="mt-3 text-lg opacity-60"
-                    data-sb-field-path="description"
-                  >
-                    {post.data.description}
-                  </p>
-                )}
-                <ArrowIcon className="mt-4" />
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </main>
-      <Footer copyrightText={globalData.footerText} />
-      <GradientBackground
-        variant="large"
-        className="fixed top-20 opacity-40 dark:opacity-60"
-      />
-      <GradientBackground
-        variant="small"
-        className="absolute bottom-0 opacity-20 dark:opacity-10"
-      />
-    </Layout>
+              Submit Application
+            </button>
+          </form>
+        </main>
+      </div>
+    </>
   );
-}
-
-export function getStaticProps() {
-  const posts = getPosts();
-  const globalData = getGlobalData();
-
-  return { props: { posts, globalData } };
 }
